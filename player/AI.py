@@ -281,10 +281,18 @@ class AI:
                     if pawn_counts[x]['p'] > 0:
                         score -= 10  # Penalty for doubled pawns
                     pawn_counts[x]['p'] += 1
+                    
+                    # Check for isolated pawns
+                    if (x > 0 and pawn_counts[x - 1]['p'] == 0) and (x < 7 and pawn_counts[x + 1]['p'] == 0):
+                        isolated_pawns.append((x, y))
                 elif piece == 'P':
                     if pawn_counts[x]['P'] > 0:
                         score -= 10  # Penalty for doubled pawns
                     pawn_counts[x]['P'] += 1
+                    
+                    # Check for isolated pawns
+                    if (x > 0 and pawn_counts[x - 1]['P'] == 0) and (x < 7 and pawn_counts[x + 1]['P'] == 0):
+                        isolated_pawns.append((x, y))
 
                 
         # Apply a bonus for avoiding isolated pawns
