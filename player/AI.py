@@ -276,7 +276,7 @@ class AI:
         # Evaluate the board position
         for x in range(8):
             for y in range(8):
-                piece = board[y][x].pieceonTile.tostring()
+                piece = gametiles[y][x].pieceonTile.tostring()
                 if piece in piece_values:
                     score += piece_values[piece]
                 
