@@ -249,48 +249,78 @@ class AI:
             arr.append([y,x,move[0],move[1],mk])
         return arr
 
-
+    def is_center(x, y):
+        return 2 <= x <= 5 and 2 <= y <= 5
+    
     def calculateb(self,gametiles):
-        value=0
+        # Define piece values
+        piece_values = {
+        'P': 10, 'N': 30, 'B': 30, 'R': 50, 'Q': 90, 'K': 900,
+        'p': -10, 'n': -30, 'b': -30, 'r': -50, 'q': -90, 'k': -900
+        }
+        
+        # Initialize a dictionary to keep track of pawn counts per file (column)
+        pawn_counts = {x: {'P': 0, 'p': 0} for x in range(8)}
+
+        #isolated pawn bonus
+        isolated_pawns = []
+
+        # Initialize variables to check if castling has occurred
+        white_kingside_castle = False
+        white_queenside_castle = False
+        black_kingside_castle = False
+        black_queenside_castle = False
+
+        score=0
+
+        # Evaluate the board position
         for x in range(8):
             for y in range(8):
-                    if gametiles[y][x].pieceonTile.tostring()=='P':
-                        value=value-100
+                piece = board[y][x].pieceonTile.tostring()
+                if piece in piece_values:
+                    score += piece_values[piece]
+                
+                # Bonus for pieces in the center
+                if is_center(x, y):
+                    score += 5 if piece.isupper() else -5
+                    
+                # Check for doubled pawns
+                if piece.lower() == 'p':
+                    if pawn_counts[x]['p'] > 0:
+                        score -= 10  # Penalty for doubled pawns
+                    pawn_counts[x]['p'] += 1
+                elif piece == 'P':
+                    if pawn_counts[x]['P'] > 0:
+                        score -= 10  # Penalty for doubled pawns
+                    pawn_counts[x]['P'] += 1
 
-                    if gametiles[y][x].pieceonTile.tostring()=='N':
-                        value=value-350
+                # Check if castling has occurred
+                if piece == 'K':
+                    white_kingside_castle = True
+                elif piece == 'k':
+                    black_kingside_castle = True
+                elif piece == 'R' and (x, y) == (7, 7):
+                    white_queenside_castle = True
+                elif piece == 'r' and (x, y) == (0, 7):
+                    black_queenside_castle = True
+                
+        # Apply a bonus for avoiding isolated pawns
+        isolated_pawn_bonus = 10
+        for x, y in isolated_pawns:
+            score -= isolated_pawn_bonus
 
-                    if gametiles[y][x].pieceonTile.tostring()=='B':
-                        value=value-350
-
-                    if gametiles[y][x].pieceonTile.tostring()=='R':
-                        value=value-525
-
-                    if gametiles[y][x].pieceonTile.tostring()=='Q':
-                        value=value-1000
-
-                    if gametiles[y][x].pieceonTile.tostring()=='K':
-                        value=value-10000
-
-                    if gametiles[y][x].pieceonTile.tostring()=='p':
-                        value=value+100
-
-                    if gametiles[y][x].pieceonTile.tostring()=='n':
-                        value=value+350
-
-                    if gametiles[y][x].pieceonTile.tostring()=='b':
-                        value=value+350
-
-                    if gametiles[y][x].pieceonTile.tostring()=='r':
-                        value=value+525
-
-                    if gametiles[y][x].pieceonTile.tostring()=='q':
-                        value=value+1000
-
-                    if gametiles[y][x].pieceonTile.tostring()=='k':
-                        value=value+10000
-
-        return value
+        # Apply a bonus for castling
+        castling_bonus = 20
+        if white_kingside_castle:
+            score += castling_bonus
+        if white_queenside_castle:
+            score += castling_bonus
+        if black_kingside_castle:
+            score -= castling_bonus
+        if black_queenside_castle:
+            score -= castling_bonus
+        
+        return score
 
 
     def move(self,gametiles,y,x,n,m):
