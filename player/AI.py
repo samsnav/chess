@@ -263,12 +263,6 @@ class AI:
         #isolated pawn bonus
         isolated_pawns = []
 
-        # Initialize variables to check if castling has occurred
-        white_kingside_castle = False
-        white_queenside_castle = False
-        black_kingside_castle = False
-        black_queenside_castle = False
-
         score=0
 
         # Evaluate the board position
@@ -292,31 +286,12 @@ class AI:
                         score -= 10  # Penalty for doubled pawns
                     pawn_counts[x]['P'] += 1
 
-                # Check if castling has occurred
-                if piece == 'K':
-                    white_kingside_castle = True
-                elif piece == 'k':
-                    black_kingside_castle = True
-                elif piece == 'R' and (x, y) == (7, 7):
-                    white_queenside_castle = True
-                elif piece == 'r' and (x, y) == (0, 7):
-                    black_queenside_castle = True
                 
         # Apply a bonus for avoiding isolated pawns
         isolated_pawn_bonus = 10
         for x, y in isolated_pawns:
             score -= isolated_pawn_bonus
 
-        # Apply a bonus for castling
-        castling_bonus = 20
-        if white_kingside_castle:
-            score += castling_bonus
-        if white_queenside_castle:
-            score += castling_bonus
-        if black_kingside_castle:
-            score -= castling_bonus
-        if black_queenside_castle:
-            score -= castling_bonus
         
         return score
 
