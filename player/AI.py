@@ -249,8 +249,6 @@ class AI:
             arr.append([y,x,move[0],move[1],mk])
         return arr
 
-    def is_center(x, y):
-        return 2 <= x <= 5 and 2 <= y <= 5
     
     def calculateb(self,gametiles):
         # Define piece values
@@ -281,7 +279,7 @@ class AI:
                     score += piece_values[piece]
                 
                 # Bonus for pieces in the center
-                if is_center(x, y):
+                if 2 <= x <= 5 and 2 <= y <= 5:
                     score += 5 if piece.isupper() else -5
                     
                 # Check for doubled pawns
